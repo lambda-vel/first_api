@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaad_first_api/main.dart';
@@ -17,12 +18,14 @@ class Posts extends StatefulWidget {
 
 class _PostsState extends State<Posts> {
   // late String postData = postData;
-  var getPosts = 'https://jsonplaceholder.typicode.com/posts';
+  var getPostsUrl = 'https://jsonplaceholder.typicode.com/posts';
   var postData = 'No Data!';
   var statusCodePosts = 404;
   var data = 'No Data!';
+  bool isLoading = true;
 
-  fetchData() async {
+
+/*  fetchData() async {
     // print('Button Pressed!');
     http.Response responsePosts = await http.get(Uri.parse(getPosts));
 
@@ -36,10 +39,22 @@ class _PostsState extends State<Posts> {
       } else {
         data = 'Data Not Found';
       }
-
-      // List <Map<String,dynamic>> postData = json.decode(response.body);
-
     });
+  }*/
+
+  void getData() async{
+    http.Response response = await http.get(Uri.parse(getPostsUrl));
+    setState(() {
+      data = response.body;
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    getData();
+    print(data.runtimeType);
   }
 
   @override
@@ -54,14 +69,14 @@ class _PostsState extends State<Posts> {
             fontSize: 24,
             color: Colors.white,
           ),
-          actions:[
+          /*actions:[
             IconButton(
               onPressed: (){
-                fetchData();
+                // fetchData();
               },
               icon: const Icon(Icons.download),
             ),
-          ],
+          ],*/
           leading: BackButton(
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(
@@ -78,10 +93,38 @@ class _PostsState extends State<Posts> {
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: SingleChildScrollView(
-              // child: Text(postData),
               child: Column(
                 children: [
-                  Text(data),
+                  // Text(data),
+                  isLoading
+                  ? const CircularProgressIndicator()
+                  : Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: jsonDecode(data).length,
+                          itemBuilder: (context, index) => Card(
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.blueGrey,
+                                child: Text(
+                                  '${jsonDecode(data)[index]['id']}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              title: Text(
+                                '${jsonDecode(data)[index]['title']}',
+                                style: const TextStyle(color: Colors.blue),
+                              ),
+                              subtitle: Text(
+                                '${jsonDecode(data)[index]['body']}',
+                              ),
+                            ),
+                          ),
+              
+              
+                      ),
+                  ),
                 ],
               ),
             ),
