@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaad_first_api/main.dart';
@@ -21,8 +23,9 @@ class _PostsState extends State<Post1> {
   var post1Data = 'No Data!';
   var statusCodePost1 = 404;
   var data = 'No Data!';
+  bool isLoading = true;
 
-  fetchData() async {
+/*  fetchData() async {
     // print('Button Pressed!');
     http.Response responsePosts = await http.get(Uri.parse(getPost1));
 
@@ -40,7 +43,23 @@ class _PostsState extends State<Post1> {
       // List <Map<String,dynamic>> postData = json.decode(response.body);
 
     });
+  }*/
+
+  void getData() async{
+    http.Response response = await http.get(Uri.parse(getPost1));
+    setState(() {
+      data = response.body;
+      isLoading = false;
+    });
   }
+
+  @override
+  void initState(){
+    super.initState();
+    getData();
+    // print(data.runtimeType);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,14 +73,7 @@ class _PostsState extends State<Post1> {
             fontSize: 24,
             color: Colors.white,
           ),
-          actions:[
-            IconButton(
-              onPressed: (){
-                fetchData();
-              },
-              icon: const Icon(Icons.download),
-            ),
-          ],
+
           leading: BackButton(
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(
@@ -81,7 +93,36 @@ class _PostsState extends State<Post1> {
               // child: Text(postData),
               child: Column(
                 children: [
-                  Text(post1Data),
+                  isLoading
+                      ? const CircularProgressIndicator()
+                      : Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              /*Text(
+                                '${jsonDecode(data)['id']}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),*/
+
+                              Text(
+                                'User ID: ${jsonDecode(data)['userId']}',
+                              ),
+
+                              Text(
+                                '${jsonDecode(data)['title']}',
+                                  style: const TextStyle(color: Colors.blue),
+                              ),
+
+                              Text(
+                                '${jsonDecode(data)['body']}',
+                              ),
+                              ],
+                            ),
+                          ),
                 ],
               ),
             ),

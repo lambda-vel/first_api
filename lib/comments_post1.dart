@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaad_first_api/main.dart';
@@ -21,8 +23,9 @@ class _CommentsPost1State extends State<CommentsPost1> {
   var postCommentsPost1 = 'No Data!';
   var statusCodeCommentsPost1 = 404;
   var data = 'No Data!';
+  bool isLoading = true;
 
-  fetchData() async {
+/*  fetchData() async {
     // print('Button Pressed!');
     http.Response responsePosts = await http.get(Uri.parse(getCommentsPost1));
 
@@ -40,6 +43,21 @@ class _CommentsPost1State extends State<CommentsPost1> {
       // List <Map<String,dynamic>> postData = json.decode(response.body);
 
     });
+  }*/
+
+  void getData() async{
+    http.Response response = await http.get(Uri.parse(getCommentsPost1));
+    setState(() {
+      data = response.body;
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    getData();
+    // print(data.runtimeType);
   }
 
   @override
@@ -54,14 +72,7 @@ class _CommentsPost1State extends State<CommentsPost1> {
             fontSize: 24,
             color: Colors.white,
           ),
-          actions:[
-            IconButton(
-              onPressed: (){
-                fetchData();
-              },
-              icon: const Icon(Icons.download),
-            ),
-          ],
+
           leading: BackButton(
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(
@@ -81,7 +92,36 @@ class _CommentsPost1State extends State<CommentsPost1> {
               // child: Text(postData),
               child: Column(
                 children: [
-                  Text(data),
+                  isLoading
+                      ? const CircularProgressIndicator()
+                      : Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: jsonDecode(data).length,
+                      itemBuilder: (context, index) => Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.blueGrey,
+                            child: Text(
+                              '${jsonDecode(data)[index]['id']}',
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          title: Text(
+                            '${jsonDecode(data)[index]['name']}',
+                            style: const TextStyle(color: Colors.blue),
+                          ),
+                          subtitle: Text(
+                            '${jsonDecode(data)[index]['email']}',
+                          ),
+                           /*Text(
+                            '${jsonDecode(data)[index]['body']}',
+                          ),*/
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

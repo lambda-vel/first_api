@@ -4,13 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:jaad_first_api/main.dart';
 
 class Posts extends StatefulWidget {
-  // final String postData;
-  // const Posts({super.key, required this.postData});
   const Posts({super.key});
-/*  fetchData(postData) {
-    // TODO: implement fetchData
-    throw UnimplementedError();
-  }*/
 
   @override
   State<Posts> createState() => _PostsState();
@@ -23,7 +17,6 @@ class _PostsState extends State<Posts> {
   var statusCodePosts = 404;
   var data = 'No Data!';
   bool isLoading = true;
-
 
 /*  fetchData() async {
     // print('Button Pressed!');
@@ -54,7 +47,7 @@ class _PostsState extends State<Posts> {
   void initState(){
     super.initState();
     getData();
-    print(data.runtimeType);
+    // print(data.runtimeType);
   }
 
   @override
@@ -121,8 +114,6 @@ class _PostsState extends State<Posts> {
                               ),
                             ),
                           ),
-              
-              
                       ),
                   ),
                 ],
